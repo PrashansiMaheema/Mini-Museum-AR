@@ -22,7 +22,9 @@ This project is an Augmented Reality Mini Museum created using A-Frame and AR.js
 
 ## 3D Model Credits
 Model: Avocado  
-Source: Khronos glTF Sample Assets  
+Source: Khronos glTF Sample Assets
+Original credit: Microsoft
+Licence: Creative Commons Zero (CC0 1.0 Universal)
 Model URL: https://github.com/KhronosGroup/glTF-Sample-Assets
 
 Licence: Check and record the licence specified for the Avocado model in the source repository.
