@@ -77,50 +77,38 @@
             }
 
         });
-
-
         // MARKER STATUS COMPONENT
         AFRAME.registerComponent('marker-status', {
 
-            init: function () {
+    init: function () {
 
-                const banner =
-                    document.querySelector('#status-banner');
+        const banner = document.querySelector('#status-banner');
 
-                const update = (message, colour) => {
+        this.el.addEventListener('markerFound', function () {
 
-                    banner.setAttribute('value', message);
-
-                    banner.setAttribute('color', colour);
-
-                };
-
-                update(
-                    'Point your camera at the Hiro marker',
-                    '#FFC857'
-                );
-
-                this.el.addEventListener('markerFound', () => {
-
-                    update(
-                        'MARKER FOUND - Welcome to the Mini Museum!',
-                        '#62E6A7'
-                    );
-
-                });
-
-                this.el.addEventListener('markerLost', () => {
-
-                    update(
-                        'Marker lost - Scan the Hiro marker again',
-                        '#FF6B6B'
-                    );
-
-                });
-
-            }
+            banner.setAttribute('text', {
+                value: 'MARKER FOUND!',
+                color: '#00FF00',
+                align: 'center',
+                width: 2.8
+            });
 
         });
+
+        this.el.addEventListener('markerLost', function () {
+
+            banner.setAttribute('text', {
+                value: 'MARKER LOST!',
+                color: '#FF0000',
+                align: 'center',
+                width: 2.8
+            });
+
+        });
+
+    }
+
+});
 
     </script>
 
