@@ -1,0 +1,252 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mini Museum AR Exhibition</title>
+
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+    <!-- AR.js -->
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/aframe/build/aframe-ar.js"></script>
+
+    <script>
+
+        // COLOUR TAP COMPONENT
+        AFRAME.registerComponent('colour-tap', {
+
+            init: function () {
+
+                const colours = [
+                    '#2196F3',
+                    '#E91E63',
+                    '#FFC107',
+                    '#4CAF50',
+                    '#9C27B0'
+                ];
+
+                let index = 0;
+
+                this.el.addEventListener('click', () => {
+
+                    index = (index + 1) % colours.length;
+
+                    this.el.setAttribute(
+                        'material',
+                        'color',
+                        colours[index]
+                    );
+
+                });
+
+            }
+
+        });
+
+
+        // GROW TAP COMPONENT
+        AFRAME.registerComponent('grow-tap', {
+
+            init: function () {
+
+                let grown = false;
+
+                this.el.addEventListener('click', () => {
+
+                    grown = !grown;
+
+                    this.el.setAttribute('animation__grow', {
+
+                        property: 'scale',
+
+                        to: grown
+                            ? '1.65 1.65 1.65'
+                            : '1 1 1',
+
+                        dur: 250,
+
+                        easing: 'easeOutElastic'
+
+                    });
+
+                });
+
+            }
+
+        });
+
+
+        // MARKER STATUS COMPONENT
+        AFRAME.registerComponent('marker-status', {
+
+            init: function () {
+
+                const banner =
+                    document.querySelector('#status-banner');
+
+                const update = (message, colour) => {
+
+                    banner.setAttribute('value', message);
+
+                    banner.setAttribute('color', colour);
+
+                };
+
+                update(
+                    'Point your camera at the Hiro marker',
+                    '#FFC857'
+                );
+
+                this.el.addEventListener('markerFound', () => {
+
+                    update(
+                        'MARKER FOUND - Welcome to the Mini Museum!',
+                        '#62E6A7'
+                    );
+
+                });
+
+                this.el.addEventListener('markerLost', () => {
+
+                    update(
+                        'Marker lost - Scan the Hiro marker again',
+                        '#FF6B6B'
+                    );
+
+                });
+
+            }
+
+        });
+
+    </script>
+
+</head>
+
+<body>
+
+    <a-scene
+        embedded
+        vr-mode-ui="enabled: false"
+        renderer="colorManagement: true"
+        arjs="sourceType: webcam; debugUIEnabled: false;">
+
+        <!-- LOAD 3D MODEL -->
+        <a-assets>
+
+            <a-asset-item
+                id="avocado-model"
+                src="./assets/Avocado.glb">
+            </a-asset-item>
+
+        </a-assets>
+
+
+        <!-- HIRO MARKER -->
+        <a-marker
+            preset="hiro"
+            marker-status>
+
+
+            <!-- MUSEUM TITLE -->
+            <a-text
+                value="MINI MUSEUM"
+                position="-1.05 1.65 0"
+                align="center"
+                color="#FFF4D6"
+                width="4">
+            </a-text>
+
+
+            <!-- ROTATING TORUS -->
+            <a-torus
+                position="-1 1 0"
+                radius="0.5"
+                radius-tubular="0.1"
+                color="orange"
+                animation="property: rotation; to: 0 360 0; loop: true; dur: 3000">
+            </a-torus>
+
+
+            <!-- MOVING SPHERE -->
+            <a-sphere
+               class="clickable"
+               colour-tap
+               position="0 1 0"
+               radius="0.5"
+               color="blue"
+               animation="property: position; to: 0 2 0; dir: alternate; loop: true; dur: 2000">
+            </a-sphere>
+
+
+            <!-- ROTATING CUBE -->
+            <a-box
+               class="clickable"
+               grow-tap
+               position="1 1 0"
+               width="0.8"
+               height="0.8"
+               depth="0.8"
+               color="green"
+               animation="property: rotation; to: 360 360 0; loop: true; dur: 4000">
+            </a-box>
+
+
+            <!-- CYLINDER -->
+            <a-cylinder
+                position="0 0.5 -1"
+                radius="0.4"
+                height="1"
+                color="red">
+            </a-cylinder>
+
+
+            <!-- TEXT LABEL -->
+            <a-text
+                value="Mini Museum"
+                position="-1 2.5 0"
+                color="black"
+                width="4"
+                align="center">
+            </a-text>
+
+            <!-- AVOCADO 3D MODEL -->
+            <a-entity
+                gltf-model="#avocado-model"
+                position="0 0.5 -1.5"
+                scale="10 10 10"
+                rotation="0 0 0">
+            </a-entity>
+
+
+        </a-marker>
+
+        <!-- CAMERA -->
+        <a-entity camera>
+
+            <!-- STATUS BANNER -->
+            <a-entity
+                id="status-banner"
+                text="
+                    value: Point your camera at the Hiro marker;
+                    align: center;
+                    width: 2.8;
+                    color: #FFC857"
+                position="0 -0.72 -2.2">
+            </a-entity>
+
+
+            <!-- MOUSE CURSOR AND RAYCASTER -->
+            <a-entity
+                cursor="rayOrigin: mouse; fuse: false"
+                raycaster="objects: .clickable; far: 10">
+            </a-entity>
+
+        </a-entity>
+
+    </a-scene>
+</body>
+</html>
